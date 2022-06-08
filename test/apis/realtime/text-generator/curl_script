@@ -1,0 +1,1 @@
+curl http://a8915554b07994b5ba9d9e569d374820-a176585f9af58ff2.elb.us-east-1.amazonaws.com/text-generator -X POST -H "Content-Type: application/json" -d @sample.jso

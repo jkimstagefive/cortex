@@ -26,22 +26,35 @@ import requests
 import numpy as np
 
 # the image URL is the location of the image we should send to the server
-IMAGE_URL = "https://tensorflow.org/images/blogs/serving/cat.jpg"
+# IMAGE_URL = "https://tensorflow.org/images/blogs/serving/cat.jpg"
+#IMAGE_URL = "https://en.wikipedia.org/wiki/Macaw#/media/File:Blue-and-Yellow-Macaw.jpg"
+#IMAGE_URL = "https://wja300-cortex.s3.amazonaws.com/image/cat.jpg"
+#IMAGE_URL = "https://wja300-cortex.s3.amazonaws.com/image/macaw.jpg"
+IMAGE_URL = ["https://wja300-cortex.s3.amazonaws.com/image/butterfly1.jpg",
+                "https://wja300-cortex.s3.amazonaws.com/image/butterfly1.jpg",
+                "https://wja300-cortex.s3.amazonaws.com/image/butterfly1.jpg",
+"https://wja300-cortex.s3.amazonaws.com/image/butterfly1.jpg",
+                "https://wja300-cortex.s3.amazonaws.com/image/butterfly1.jpg",
+"https://wja300-cortex.s3.amazonaws.com/image/butterfly1.jpg",
+                "https://wja300-cortex.s3.amazonaws.com/image/butterfly1.jpg",
+"https://wja300-cortex.s3.amazonaws.com/image/butterfly1.jpg",
+                "https://wja300-cortex.s3.amazonaws.com/image/butterfly1.jpg",
+"https://wja300-cortex.s3.amazonaws.com/image/butterfly1.jpg",
+                "https://wja300-cortex.s3.amazonaws.com/image/butterfly1.jpg",
+"https://wja300-cortex.s3.amazonaws.com/image/butterfly1.jpg",
+                "https://wja300-cortex.s3.amazonaws.com/image/butterfly1.jpg",
+"https://wja300-cortex.s3.amazonaws.com/image/butterfly1.jpg",
+                "https://wja300-cortex.s3.amazonaws.com/image/butterfly1.jpg",
+"https://wja300-cortex.s3.amazonaws.com/image/butterfly1.jpg",
+                "https://wja300-cortex.s3.amazonaws.com/image/butterfly1.jpg",
+"https://wja300-cortex.s3.amazonaws.com/image/butterfly1.jpg",
+                "https://wja300-cortex.s3.amazonaws.com/image/butterfly1.jpg",
+"https://wja300-cortex.s3.amazonaws.com/image/butterfly1.jpg"]
 
 
-def main():
-    # parse arg
-    if len(sys.argv) != 2:
-        print("usage: python client.py <http://host:port>")
-        sys.exit(1)
-    address = sys.argv[1]
-    server_url = f"{address}/v1/models/resnet50_neuron:predict"
 
-    # download labels
-    labels = requests.get(
-        "https://storage.googleapis.com/download.tensorflow.org/data/ImageNetLabels.txt"
-    ).text.split("\n")[1:]
-
+def processing(IMAGE_URL, server_url, labels):
+    
     # download the image
     response = requests.get(IMAGE_URL, stream=True)
     img = Image.open(io.BytesIO(response.content))
@@ -83,6 +96,22 @@ def main():
             prediction, (total_time * 1000) / num_requests
         )
     )
+
+def main():
+    # parse arg
+    if len(sys.argv) != 2:
+        print("usage: python client.py <http://host:port>")
+        sys.exit(1)
+    address = sys.argv[1]
+    server_url = f"{address}/v1/models/resnet50_neuron:predict"
+
+    # download labels
+    labels = requests.get(
+        "https://storage.googleapis.com/download.tensorflow.org/data/ImageNetLabels.txt"
+    ).text.split("\n")[1:]
+
+    for i in IMAGE_URL:
+        processing(i, server_url, labels)
 
 
 if __name__ == "__main__":
