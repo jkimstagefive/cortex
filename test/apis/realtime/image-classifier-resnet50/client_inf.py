@@ -31,29 +31,29 @@ import numpy as np
 #IMAGE_URL = "https://wja300-cortex.s3.amazonaws.com/image/cat.jpg"
 #IMAGE_URL = "https://wja300-cortex.s3.amazonaws.com/image/macaw.jpg"
 IMAGE_URL = ["https://wja300-cortex.s3.amazonaws.com/image/butterfly1.jpg",
-                "https://wja300-cortex.s3.amazonaws.com/image/butterfly1.jpg",
-                "https://wja300-cortex.s3.amazonaws.com/image/butterfly1.jpg",
-"https://wja300-cortex.s3.amazonaws.com/image/butterfly1.jpg",
-                "https://wja300-cortex.s3.amazonaws.com/image/butterfly1.jpg",
-"https://wja300-cortex.s3.amazonaws.com/image/butterfly1.jpg",
-                "https://wja300-cortex.s3.amazonaws.com/image/butterfly1.jpg",
-"https://wja300-cortex.s3.amazonaws.com/image/butterfly1.jpg",
-                "https://wja300-cortex.s3.amazonaws.com/image/butterfly1.jpg",
-"https://wja300-cortex.s3.amazonaws.com/image/butterfly1.jpg",
-                "https://wja300-cortex.s3.amazonaws.com/image/butterfly1.jpg",
-"https://wja300-cortex.s3.amazonaws.com/image/butterfly1.jpg",
-                "https://wja300-cortex.s3.amazonaws.com/image/butterfly1.jpg",
-"https://wja300-cortex.s3.amazonaws.com/image/butterfly1.jpg",
-                "https://wja300-cortex.s3.amazonaws.com/image/butterfly1.jpg",
-"https://wja300-cortex.s3.amazonaws.com/image/butterfly1.jpg",
-                "https://wja300-cortex.s3.amazonaws.com/image/butterfly1.jpg",
-"https://wja300-cortex.s3.amazonaws.com/image/butterfly1.jpg",
-                "https://wja300-cortex.s3.amazonaws.com/image/butterfly1.jpg",
-"https://wja300-cortex.s3.amazonaws.com/image/butterfly1.jpg"]
+                "https://wja300-cortex.s3.amazonaws.com/image/butterfly2.jpg",
+                "https://wja300-cortex.s3.amazonaws.com/image/cat1.jpg",
+                "https://wja300-cortex.s3.amazonaws.com/image/cat2.jpg",
+                "https://wja300-cortex.s3.amazonaws.com/image/chicken1.jpg",
+                "https://wja300-cortex.s3.amazonaws.com/image/chicken2.jpg",
+                "https://wja300-cortex.s3.amazonaws.com/image/cow1.jpg",
+                "https://wja300-cortex.s3.amazonaws.com/image/cow2.jpg",
+                "https://wja300-cortex.s3.amazonaws.com/image/dog1.jpg",
+                "https://wja300-cortex.s3.amazonaws.com/image/dog2.jpg",
+                "https://wja300-cortex.s3.amazonaws.com/image/elephant1.jpg",
+                "https://wja300-cortex.s3.amazonaws.com/image/elephant2.jpg",
+                "https://wja300-cortex.s3.amazonaws.com/image/horse1.jpg",
+                "https://wja300-cortex.s3.amazonaws.com/image/horse2.jpg",
+                "https://wja300-cortex.s3.amazonaws.com/image/sheep1.jpg",
+                "https://wja300-cortex.s3.amazonaws.com/image/sheep2.jpg",
+                "https://wja300-cortex.s3.amazonaws.com/image/spider1.jpg",
+                "https://wja300-cortex.s3.amazonaws.com/image/spider2.jpg",
+                "https://wja300-cortex.s3.amazonaws.com/image/squirrel1.jpg",
+                "https://wja300-cortex.s3.amazonaws.com/image/squirrel2.jpg"]
 
 
 
-def processing(IMAGE_URL, server_url, labels):
+def processing(f, IMAGE_URL, index, server_url, labels):
     
     # download the image
     response = requests.get(IMAGE_URL, stream=True)
@@ -92,10 +92,13 @@ def processing(IMAGE_URL, server_url, labels):
         prediction = labels[label_idx]
 
     print(
-        "Prediction class: {}, avg latency: {} ms".format(
-            prediction, (total_time * 1000) / num_requests
+            "{}: Prediction class: {}, avg latency: {} ms".format(
+            index, prediction, (total_time * 1000) / num_requests
         )
     )
+
+    f.write(prediction + '\n')
+
 
 def main():
     # parse arg
@@ -105,13 +108,17 @@ def main():
     address = sys.argv[1]
     server_url = f"{address}/v1/models/resnet50_neuron:predict"
 
+    f = open('i1_R_result.txt', 'w')
+ 
     # download labels
     labels = requests.get(
         "https://storage.googleapis.com/download.tensorflow.org/data/ImageNetLabels.txt"
     ).text.split("\n")[1:]
+    for i in range(5):
+        for index, i in enumerate(IMAGE_URL):
+            processing(f, i, index, server_url, labels)
 
-    for i in IMAGE_URL:
-        processing(i, server_url, labels)
+    f.close()
 
 
 if __name__ == "__main__":
