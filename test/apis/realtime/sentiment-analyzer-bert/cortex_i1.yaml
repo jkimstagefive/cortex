@@ -1,0 +1,13 @@
+- name: sentiment-analyzer-bert
+  kind: RealtimeAPI
+  pod:
+    port: 8501
+    max_concurrency: 256
+    containers:
+    - name: api
+      image: quay.io/dexter_jin/sentiment-analyzer-bert-cpu:latest
+      readiness_probe:
+        exec:
+          command: ["tfs_model_status_probe", "-addr", "localhost:8500", "-model-name", "bert"]
+      compute:
+        cpu: 1

@@ -1,0 +1,13 @@
+- name: flower-classifier-iris
+  kind: RealtimeAPI
+  pod:
+    port: 8501
+    max_concurrency: 256
+    containers:
+    - name: api
+      image: quay.io/dexter_jin/flower-classifier-iris-gpu:latest
+      readiness_probe:
+        exec:
+          command: ["tfs_model_status_probe", "-addr", "localhost:8500", "-model-name", "iris"]
+      compute:
+        cpu: 1
