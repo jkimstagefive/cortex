@@ -10,4 +10,6 @@
         exec:
           command: ["tfs_model_status_probe", "-addr", "localhost:8500", "-model-name", "inception"]
       compute:
-        cpu: 1
+        cpu: 200m
+        gpu: 1
+        mem: 512Mi
