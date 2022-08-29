@@ -30,21 +30,7 @@ import (
 	"github.com/cortexlabs/cortex/pkg/types/spec"
 	"github.com/cortexlabs/cortex/pkg/types/userconfig"
 	"go.uber.org/zap"
-	redis "github.com/go-redis/redis"
-        sstrings "strings"
-        "strconv"
 )
-
-func initializeRedisClient() (*redis.Client, error) {
-        client := redis.NewClient(&redis.Options{
-        Addr:     "23.23.220.207:6379", // 접근 url 및 port
-        Password: "redisscheduler",               // password ""값은 없다는 뜻
-        DB:       0,                // 기본 DB 사용
-        })
-
-        _, err := client.Ping().Result()
-        return client, err
-}
 
 const (
 	_prometheusQueryTimeoutSeconds = 10
@@ -287,52 +273,6 @@ func (a *Autoscaler) autoscaleFn(api userconfig.Resource) (func() error, error) 
 				"request":                        request,
 			},
 		)
-
-		// redis connection
-                client, err := initializeRedisClient()
-
-                if nil != err {
-                        panic(err)
-                }
-
-                val, err := client.Get("i1R_reqs_satiSLO_60sec").Result()
-                if err != nil {
-                        panic(err)
-                }
-                fmt.Println("wja300: value : ", val)
-
-                instype := []string{"i1", "p2", "p3", "c5"}
-                reqtype := []string{"R", "B", "G", "Y", "S"}
-                reqtype_detail := []string{"resnet50", "sentiment", "text", "sound", "inception"}
-
-                for i := 0; i < len(reqtype); i++ {
-                        for j :=0; j < len(instype); j++{
-                                if (sstrings.Contains(api.Name, reqtype_detail[i]) && sstrings.Contains(api.Name, instype[j])){
-                                        val, err := client.Get(instype[j]+reqtype[i]+"_scaler").Result()
-                                        if err != nil {
-                                                panic(err)
-                                        }
-                                        i, err := strconv.ParseInt(val, 10, 32) // for each req and instype get the number of scaling instances
-                                        if err != nil {
-                                                panic(err)
-                                        }
-
-                                        if(request > int32(i)){ // if inflight cortex decision is larger than scheduler decision
-                                                // nothing done
-                                        } else { // if scheduler decision is larger than infiight cortex decision
-                                                request = int32(i)
-                                        }
-                                        //request = int32(i)
-                                }
-                        }
-                        //fmt.Println(i, ":", arr[i])
-                }
-
-                fmt.Println("wja300: request :", request)
-                fmt.Println("wja300: currentRequestedReplicas :", currentRequestedReplicas)
-                fmt.Println("wja300: recommendation :", recommendation)
-                fmt.Println("wja300: avgInFlight :", avgInFlight)
-                fmt.Println("wja300: rawRecommendation :", rawRecommendation)
 
 		if currentRequestedReplicas != request {
 			log.Infof("autoscaling wja30 event: %d -> %d", currentRequestedReplicas, request)
