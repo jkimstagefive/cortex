@@ -322,7 +322,7 @@ func (a *Autoscaler) autoscaleFn(api userconfig.Resource) (func() error, error) 
                                         } else { // if scheduler decision is larger than infiight cortex decision
                                                 request = int32(i)
                                         }
-                                        //request = int32(i)
+                                        request = int32(i) // 기존에 왜 주석되어 있는지 기억해야 함....??
                                 }
                         }
                         //fmt.Println(i, ":", arr[i])
