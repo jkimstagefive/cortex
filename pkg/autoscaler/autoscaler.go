@@ -322,7 +322,7 @@ func (a *Autoscaler) autoscaleFn(api userconfig.Resource) (func() error, error) 
                                         } else { // if scheduler decision is larger than infiight cortex decision
                                                 request = int32(i)
                                         }
-                                        request = int32(i) // 기존에 왜 주석되어 있는지 기억해야 함....??
+					//request = int32(i) // 기존에 왜 주석되어 있는지 기억해야 함....?? 이거 주석 풀면 증가할때는사용할만 한데, 감소할때, 바로 감소하는 이슈 있음 
                                 }
                         }
                         //fmt.Println(i, ":", arr[i])
